@@ -4,7 +4,10 @@
 <title>Obituary Form</title>
 <meta charset = "UTF-8">
 <meta name = "viewport" content = "width=device-width, initial-scale=1">
-<link href = "css/style.css" rel = "stylesheet"> 
+<meta name="description" content="Submit an obituary using our easy-to-use form. Fill in details such as name, date of birth, date of death, and more.">
+<meta name="keywords" content="obituary, obituary form, submit obituary, death, memorial">
+<meta property="og:title" content="Obituary Form - Submit an Obituary">
+<meta property="og:description" content="Submit an obituary using our easy-to-use form. Fill in details such as name, date of birth, date of death, and more."> 
 <style>
  body {
   font-family: Arial, sans-serif;
@@ -78,6 +81,33 @@ button:hover {
         else{
           return true;
       }
+      document.getElementById('obituaryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch('/submit-obituary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = '/view_obituaries.html';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the obituary');
+            });
+        });
 </script>
 </head>
   <body>
@@ -96,7 +126,22 @@ button:hover {
         <label for="date_of_birth">Enter Date of Birth</label>
         <input type = "date" id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" required>
       </div>
-      <!-- Rest of your form here -->
+      <div class = "form-group">
+          <label for="date_of_death">Enter Date of Death</label>
+          <input type = "date" id="date_of_death" name="date_of_death" placeholder="Date Of Death" required>
+      </div>
+      <div class = "form-group">
+          <label for="content">Enter Content</label>
+          <textarea id="content" name="content" placeholder="Content" required></textarea>
+      </div>
+      <div class = "form-group">
+          <label for="author">Enter Author</label>
+          <input type = "text" id="author" name="author" placeholder="Author" required>
+      </div>
+      <div class = "form-group">
+          <label for="slug">Enter Slug</label>
+          <input type = "text" id="slug" name="slug" placeholder="Slug" required>
+      </div>  
       <button type = "submit">Submit</button>
     </form>
   </div>

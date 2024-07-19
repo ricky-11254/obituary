@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="View an obituary page using our easy-to-use form. View details such as name, date of birth, date of death, and more.">
+<meta name="keywords" content="obituary, obituary form, view obituary, death, memorial">
+<meta property="og:title" content="Obituary Form - View an Obituary">
+<meta property="og:description" content="View an obituary using our easy-to-use form. View details such as name, date of birth, date of death, and more."> 
+
+    <title>View Obituaries</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Obituaries</h1>
+    <table id="obituariesTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Date of Death</th>
+                <th>Author</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Obituaries will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        fetch('http://localhost:3000/view-obituaries')
+            .then(response => {
+                console.log('Fetch Response:', response);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(obituaries => {
+                console.log('Obituaries Data:', obituaries);
+                const tableBody = document.querySelector('#obituariesTable tbody');
+                if (!Array.isArray(obituaries)) {
+                    throw new Error('Data is not an array');
+                }
+                obituaries.forEach(obituary => {
+                    console.log('Obituary:', obituary);
+                    const row = tableBody.insertRow();
+                    row.insertCell(0).textContent = obituary.name;
+                    row.insertCell(1).textContent = new Date(obituary.date_of_birth).toLocaleDateString();
+                    row.insertCell(2).textContent = new Date(obituary.date_of_death).toLocaleDateString();
+                    row.insertCell(3).textContent = obituary.author;
+                    row.insertCell(4).textContent = obituary.content.substring(0, 100) + '...';
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
+
